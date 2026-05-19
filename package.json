@@ -1,0 +1,13 @@
+{
+  "name": "Stream Elements Chat Bridge",
+  "version": "1.0.0",
+  "description": "Local Twitch chat bridge for ex-StreamElements overlay",
+  "main": "bridge.js",
+  "scripts": {
+    "start": "node bridge.js"
+  },
+  "dependencies": {
+    "comfy.js": "^1.1.19",
+    "ws": "^8.18.0"
+  }
+}

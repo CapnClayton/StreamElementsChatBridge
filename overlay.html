@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Capnceedee Chat Overlay</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Stint+Ultra+Condensed&display=swap" rel="stylesheet">
+
+  <style>
+    /* ─── Base reset ─────────────────────────────────────────── */
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      background: transparent;
+      overflow: hidden;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=Stint+Ultra+Condensed&display=swap');
+    :root{
+        --bgcolor: #103306;
+        --CloseColor: #20630c;
+    }
+    *{
+        font-family: "Stint Ultra Condensed", serif;
+        font-weight: 400;
+        font-style: normal;
+    }
+    .main-container {
+        position: relative;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: flex-start;
+        align-content: flex-start;
+        height: 1080px;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        padding-left: 50px;
+        padding-right: 8px;
+        padding-bottom: 24px;
+    }
+
+    .message-row {
+        position: relative;
+        height: fit-content;
+        width: 100%;
+        float: left;
+        background-color: transparent;
+        padding-bottom: 12px;
+        padding-top: 12px;
+    }
+
+    .main-container-transition {
+        transition: all 500ms linear;
+    }
+    span.pronouns {
+        margin-left: 0.5em;
+    }
+    svg.tooth {
+        width: 70%;
+        height: auto;
+        position: absolute;
+        bottom: -10px;
+        left: 28px;
+    }
+    .message-container {
+        position: relative;
+        animation-name: messageBubblePop;
+        animation-duration: .75s;
+        animation-timing-function: ease-out;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+        opacity: 0;
+    }
+
+    .alert-container {
+        animation-name: messageBubblePop;
+        animation-duration: .75s;
+        animation-timing-function: ease-out;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+        opacity: 0;
+    }
+    .message-bubble {
+        position: relative;
+        width: 35%;
+        height: fit-content;
+        overflow: visible;
+        box-sizing: border-box;
+        border-radius: 48px;
+        border: 4px solid #AB9F76;
+        background: linear-gradient(180deg, #E5D7A7 0%, #AB9F76 100%);
+    }
+    .alert-bubble {
+        position: relative;
+        width: 35%;
+        left: 20%;
+        transform: translateX(-50%);
+        height: 62px;
+        overflow: visible;
+        box-sizing: border-box;
+        background: linear-gradient(180deg, #BEC2CD 40%, #9EA0A9 40%);
+    }
+    img.mango {
+        height: 72px;
+        width: auto;
+        position: absolute;
+        top: 0px;
+        right: 1px;
+        transform: translateX(100%);
+    }
+    img.punta {
+        height: 72px;
+        width: auto;
+        position: absolute;
+        top: 0px;
+        left: 1px;
+        transform: translateX(-100%);
+    }
+    svg.pluma {
+        position: absolute;
+        bottom: 12px;
+        left: -40px;
+        width: 200px;
+        height: auto;
+        pointer-events: none;
+    }
+    .badge{
+        visibility: visible;
+        vertical-align: baseline;
+        display: inline;
+        height: 0.8em;   
+        width: auto;
+        padding-right: 8px;
+    }
+    .user-box {
+        display: flex;
+        align-items: center;
+        z-index: 10;
+        clear: both;
+        box-sizing: border-box;
+        text-transform: uppercase;
+        position: relative;
+        width: fit-content;
+        height: 48px;
+        border-radius: 32px;
+        padding-left: 1em;
+        padding-right: 1em;
+        padding-top: 0.15em;
+        padding-bottom: 0.15em;
+        left: 32px;
+        top: -12px;
+        background-color: black;
+        color: #ffffff;
+        font-size: 30px;
+    }
+
+    .user-message {
+        position: relative;
+        display: flex;
+        overflow: visible;
+        text-align: left;
+        align-items: center;
+        padding-left: 1.1em;
+        padding-right: 1.1em;
+        padding-top: 1em;
+        padding-bottom: 1em;
+        width: 100%;
+        word-break: break-word;
+        color: #241f21;
+        background: transparent;
+        box-sizing: border-box;
+        font-size: 48px;
+        line-height: 34px;
+        min-height: 28px;
+        justify-content: left;
+        flex-wrap: wrap;
+    }
+    svg.head {
+        width: 180px;
+        height: auto;
+        position: absolute;
+        top: -76px;
+        right: 1160px;
+        z-index: -2;
+        pointer-events: none;
+    }
+    svg.pluma {
+        position: absolute;
+        bottom: -36px;
+        left: -48px;
+        width: 200px;
+        height: auto;
+        pointer-events: none;
+    }
+    img.key {
+        position: absolute;
+        bottom: -30px;
+        width: 64px;
+        right: 14px;
+        filter: brightness(0.25);
+    }
+    img.mickey {
+        position: absolute;
+        left: -10px;
+        bottom: -54px;
+        width: 40px;
+        height: auto;
+        filter: brightness(0.25);
+    }
+
+    .alert-message {
+        display: flex;
+        overflow: visible;
+        text-align: left;
+        align-items: center;
+        padding-left: 2em;
+        padding-right: 2em;
+        padding-top: 1em;
+        padding-bottom: 1em;
+        width: 100%;
+        word-break: break-word;
+        color: #ffffff;
+        background: transparent;
+        box-sizing: border-box;
+        font-size: 30px;
+        line-height: 1em;
+        min-height: 28px;
+        justify-content: center;
+        position: relative;
+        bottom: 16px;
+    }
+
+    .icon {
+        position: absolute;
+        width: 84px;
+        height: auto;
+        top: calc(50% - 16px);
+        left: 5%;
+        fill: #FFEAA0;
+    }
+
+    .icon path {
+        fill: #FFEAA0;
+        stroke: #7000b3;
+        stroke-width: 1px;
+    }
+
+    .role {
+        position: absolute;
+        z-index: 1;
+        right: -8px;
+        top: -8px;
+        transform-origin: center;
+        height: 72px;
+        width: auto;
+        vertical-align: top;
+        border: 5px #fff solid;
+        border-radius: 50%;
+        background-color: #fff;
+        transform: scale(0);
+        transform-origin: center;
+        animation-name: iconWiggle;
+        animation-delay: 0.35s;
+        animation-duration: 0.75s;
+        animation-timing-function: ease-out;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+    }
+
+    .role img {
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .emote-1 {
+        width: auto;
+        height: 48px;
+        vertical-align: middle;
+        background-repeat: no-repeat;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    .emote-2 {
+        width: auto;
+        height: 96px;
+        vertical-align: middle;
+        background-repeat: no-repeat;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    .emote-3 {
+        width: auto;
+        height: 48px;
+        vertical-align: middle;
+        background-repeat: no-repeat;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    .emote-4 {
+        width: auto;
+        height: 48px;
+        vertical-align: middle;
+        background-repeat: no-repeat;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    .left {
+        position: absolute;
+        left: -98px;
+        bottom: -30px;
+        animation-delay: 0.25s;
+        animation: wingleft 1s ease-out 1 forwards;
+    }
+
+    .right {
+        position: absolute;
+        right: -122px;
+        bottom: -30px;
+        animation-delay: 0.25s;
+        animation: wingright 1s ease-out 1 forwards;
+    }
+
+    .float {
+        animation: float 6s ease-in-out infinite;
+    }
+
+    .emote {
+        height: 28px;
+        vertical-align: middle;
+        background-repeat: no-repeat;
+    }
+
+    .fadeOut {
+        animation-name: fadeOut;
+        animation-duration: 0.5s;
+        animation-timing-function: ease-out;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+    }
+    @keyframes iconWiggle{
+        0%{ transform: rotate(0deg) scale(0); }
+        25%{ transform: rotate(10deg) scale(1); }
+        50%{ transform: rotate(-10deg) scale(1.05); }
+        100%{ transform: rotate(0deg) scale(1); }
+    }
+    @keyframes box{
+        0%{ transform: scaleX(0); }
+        75%{ transform: scaleX(1.05); }
+        100%{ transform: scaleX(1); }
+    }
+    @keyframes fadeOut {
+        0% { opacity: 1; transform: translateY(0px); }
+        100% { opacity: 0; transform: translateY(-32px); }
+    }
+    @keyframes messageBubblePop {
+        0% { transform: translateY(12px); opacity: 0; }
+        100% { transform: translateY(0px); opacity: 1; }
+    }
+
+    /* ── Dev toolbar (only visible when ?dev=1 in the URL) ── */
+    #dev-toolbar {
+      display: none;
+      position: fixed;
+      bottom: 12px;
+      right: 12px;
+      z-index: 9999;
+      display: flex;
+      gap: 8px;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+    #dev-toolbar button {
+      background: rgba(0,0,0,0.75);
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    #dev-toolbar button:hover { background: #333; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════
+     OVERLAY MARKUP
+     ═══════════════════════════════════════════════════════ -->
+<div class="main-container"></div>
+
+<!-- ═══════════════════════════════════════════════════════
+     DEV TOOLBAR  (shown only when URL contains ?dev=1)
+     Open the overlay in a browser with ?dev=1 to test it.
+     ═══════════════════════════════════════════════════════ -->
+<div id="dev-toolbar">
+  <button onclick="testMessage()">▶ Test Message</button>
+  <button onclick="demoMessages(7, 3)">▶ Demo (7 msgs)</button>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   CONFIGURATION  — edit these to match your stream settings
+   ═══════════════════════════════════════════════════════════ */
+const CONFIG = {
+  channelName:    "capnceedee",   // your Twitch username
+  messagesLimit:  5,              // max visible messages
+  hideAfter:      999,            // seconds before auto-hide (999 = never)
+  hideCommands:   "yes",          // hide !commands: "yes" | "no"
+  ignoredUsers:   [],             // e.g. ["somebot", "anotherbot"]
+  botNames:       ["streamelements"],
+  badgeDisplay:   "visible",      // "visible" | "hidden"
+  pronounsMode:   "visible",      // "visible" | "hidden"
+  ShowAlerts:     "visible",      // "visible" | "hidden"
+
+  // Alert messages — $User = username, $Amount = number
+  FollowAlertMessage:   "$User hopped on the airship!",
+  SubAlertMessage:      "$User officially joined the crew!",
+  GiftSubAlertMessage:  "$User recruited $Amount crewmates!",
+  RaidAlertMessage:     "$User and their crew of $Amount raided!",
+  CheerAlertMessage:    "$User cheered $Amount bits!",
+  TipAlertMessage:      "$User tipped $Amount$",
+
+  // Alert titles (used as the username field in alert rows)
+  FollowAlertTittle:    "New Follower!",
+  SubAlertTittle:       "New Sub!",
+  GiftSubAlertTittle:   "Gift Subs!",
+  RaidAlertTittle:      "Raid!",
+  CheerAlertTittle:     "Cheer!",
+  TipAlertTittle:       "Tip!",
+
+  // Role badge images (StreamElements CDN URLs from original widget)
+  picBroadcaster: 'https://cdn.streamelements.com/uploads/b017d2bc-5a50-4dfc-bb38-a5878f265dd5.png',
+  picMod:         'https://cdn.streamelements.com/uploads/b017d2bc-5a50-4dfc-bb38-a5878f265dd5.png',
+  picVip:         'https://cdn.streamelements.com/uploads/dfa2cb5b-c40e-400d-8e82-be97942203e7.png',
+  picSub:         'https://cdn.streamelements.com/uploads/dfa2cb5b-c40e-400d-8e82-be97942203e7.png',
+  picNonsub:      'https://cdn.streamelements.com/uploads/48d7bb11-b4dd-47c9-95a6-0b55a47a47b5.png',
+};
+
+
+/* ═══════════════════════════════════════════════════════════
+   INTERNAL STATE
+   ═══════════════════════════════════════════════════════════ */
+let totalMessages = 0;
+let removeSelector;
+let animationIn  = 'fadeIn';
+let fadeOut      = 'fadeOut';
+let side         = 'right';
+let textVar      = 0;
+let provider     = 'twitch';
+
+// Build removeSelector from limit
+removeSelector = ".message-row:nth-last-child(n+" + (CONFIG.messagesLimit + 1) + ")";
+
+
+/* ═══════════════════════════════════════════════════════════
+   PRONOUNS API
+   ═══════════════════════════════════════════════════════════ */
+const Widget = { pronouns: {}, pronounsCache: {} };
+const PRONOUNS_API_BASE = 'https://pronouns.alejo.io/api';
+const PRONOUNS_API = {
+  user:    username => `${PRONOUNS_API_BASE}/users/${username}`,
+  pronouns: `${PRONOUNS_API_BASE}/pronouns`,
+};
+
+async function getPronouns() {
+  const res = await apiFetch(PRONOUNS_API.pronouns);
+  if (res) res.forEach(p => { Widget.pronouns[p.name] = p.display; });
+}
+
+async function getUserPronoun(username) {
+  if (CONFIG.pronounsMode === 'hidden') return null;
+  const key = username.toLowerCase();
+  let cached = Widget.pronounsCache[key];
+  if (!cached || cached.expire < Date.now()) {
+    const res = await apiFetch(PRONOUNS_API.user(key));
+    const [data] = res || [{}];
+    Widget.pronounsCache[key] = { ...data, expire: Date.now() + 300000 };
+    cached = Widget.pronounsCache[key];
+  }
+  if (!cached || !cached.pronoun_id) return null;
+  return Widget.pronouns[cached.pronoun_id] || null;
+}
+
+async function apiFetch(url) {
+  try {
+    const r = await fetch(url);
+    if (!r.ok) return null;
+    return r.json();
+  } catch { return null; }
+}
+
+if (CONFIG.pronounsMode !== 'hidden') {
+  getPronouns();
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   COMFYJS BRIDGE RECEIVER
+   ───────────────────────────────────────────────────────────
+   Connects to the local bridge.js server (which runs ComfyJS
+   and reads real Twitch chat) via a plain WebSocket on port
+   7474.
+
+   START ORDER:
+     1. Run start.bat / start.sh  → bridge.js connects to Twitch
+     2. OBS loads this overlay    → overlay connects to bridge
+     3. Chat appears in real time
+
+   The overlay auto-reconnects if the bridge restarts.
+   ═══════════════════════════════════════════════════════════ */
+const BRIDGE_PORT = 7474;   // must match WS_PORT in bridge.js
+let   bridgeWs   = null;
+
+function connectBridge() {
+  try {
+    bridgeWs = new WebSocket(`ws://127.0.0.1:${BRIDGE_PORT}`);
+  } catch(e) {
+    console.warn('[Bridge] WebSocket unavailable, retrying in 5s');
+    setTimeout(connectBridge, 5000);
+    return;
+  }
+
+  bridgeWs.onopen = () => {
+    console.log('[Bridge] Connected to chat bridge ✓');
+  };
+
+  bridgeWs.onmessage = async (event) => {
+    let msg;
+    try { msg = JSON.parse(event.data); } catch { return; }
+    await handleBridgeMessage(msg);
+  };
+
+  bridgeWs.onclose = () => {
+    console.log('[Bridge] Disconnected — retrying in 5s...');
+    setTimeout(connectBridge, 5000);
+  };
+
+  bridgeWs.onerror = () => {
+    // Silently swallow — onclose fires next and retries
+  };
+}
+
+async function handleBridgeMessage(msg) {
+  switch (msg.type) {
+
+    // ── Chat message ──────────────────────────────────────────
+    case 'chat': {
+      if (msg.message.startsWith('!') && CONFIG.hideCommands === 'yes') return;
+      if (CONFIG.ignoredUsers.includes(msg.user.toLowerCase())) return;
+      if (CONFIG.botNames.includes(msg.user.toLowerCase())) return;
+
+      // Determine role from flags
+      let role = 'viewer';
+      if (msg.flags.broadcaster)                                    role = 'broadcaster';
+      else if (msg.flags.mod)                                       role = 'mod';
+      else if (msg.flags.vip)                                       role = 'vip';
+      else if (msg.flags.subscriber || msg.flags.founder)           role = 'subscriber';
+
+      // Build badge HTML from the badge array bridge sends
+      let badgeHtml = '';
+      if (CONFIG.badgeDisplay === 'visible') {
+        for (const b of (msg.badges || [])) {
+          badgeHtml += `<img alt="" src="${b.url}" class="badge"> `;
+        }
+      }
+
+      // Build a data-like object for attachEmotes
+      // ComfyJS emotes are already in SE-compatible format from bridge.js
+      const fakeData = {
+        text:   msg.message,
+        emotes: msg.emotes || [],
+      };
+      const fakeRendered = { renderedText: undefined };
+      const processedMessage = attachEmotes(fakeData, fakeRendered, fakeData);
+
+      const pronouns = await getUserPronoun(msg.displayName);
+      const isHighlight = false; // ComfyJS doesn't expose highlight flag directly
+
+      addMessage(
+        msg.displayName,
+        badgeHtml,
+        processedMessage,
+        msg.isAction,
+        msg.userId,
+        msg.msgId,
+        role,
+        isHighlight,
+        'datas',
+        pronouns,
+        msg.color
+      );
+      break;
+    }
+
+    // ── Mod: delete single message ────────────────────────────
+    case 'delete-message': {
+      $(`.message-row[data-msgid="${msg.msgId}"]`).remove();
+      break;
+    }
+
+    // ── Mod: delete all messages from a user (ban/timeout) ───
+    case 'delete-messages': {
+      $(`.message-row[data-sender="${msg.userId}"]`).remove();
+      break;
+    }
+
+    // ── Alerts ────────────────────────────────────────────────
+    case 'sub': {
+      if (CONFIG.ShowAlerts === 'visible')
+        addMessage(CONFIG.SubAlertTittle, '', CONFIG.SubAlertMessage, false, msg.amount, '', 'sub', false, msg.name);
+      break;
+    }
+    case 'gift-subs': {
+      if (CONFIG.ShowAlerts === 'visible')
+        addMessage(CONFIG.GiftSubAlertTittle, '', CONFIG.GiftSubAlertMessage, false, msg.amount, '', 'gift-subs', false, msg.name);
+      break;
+    }
+    case 'cheer': {
+      if (CONFIG.ShowAlerts === 'visible')
+        addMessage(CONFIG.CheerAlertTittle, '', CONFIG.CheerAlertMessage, false, msg.amount, '', 'cheers', false, msg.name);
+      break;
+    }
+    case 'raid': {
+      if (CONFIG.ShowAlerts === 'visible')
+        addMessage(CONFIG.RaidAlertTittle, '', CONFIG.RaidAlertMessage, false, msg.amount, '', 'raid', false, msg.name);
+      break;
+    }
+    case 'follow': {
+      if (CONFIG.ShowAlerts === 'visible')
+        addMessage(CONFIG.FollowAlertTittle, '', CONFIG.FollowAlertMessage, false, '', '', 'follow', false, msg.name);
+      break;
+    }
+  }
+}
+
+// Start the bridge connection immediately
+connectBridge();
+
+
+/* ═══════════════════════════════════════════════════════════
+   STREAMELEMENTS EVENT LISTENERS
+   These work unchanged when the file is loaded inside SE,
+   and are safely ignored when running locally.
+   ═══════════════════════════════════════════════════════════ */
+window.addEventListener('onWidgetLoad', function(obj) {
+  // When running in StreamElements, fieldData overrides CONFIG
+  const fd = obj.detail.fieldData;
+  CONFIG.hideAfter        = fd.hideAfter        ?? CONFIG.hideAfter;
+  CONFIG.messagesLimit    = fd.messagesLimit     ?? CONFIG.messagesLimit;
+  CONFIG.hideCommands     = fd.hideCommands      ?? CONFIG.hideCommands;
+  CONFIG.channelName      = obj.detail.channel.username ?? CONFIG.channelName;
+  CONFIG.badgeDisplay     = fd.badgeDisplay      ?? CONFIG.badgeDisplay;
+  CONFIG.ShowAlerts       = fd.ShowAlerts        ?? CONFIG.ShowAlerts;
+  CONFIG.pronounsMode     = fd.pronounsMode      ?? CONFIG.pronounsMode;
+
+  CONFIG.FollowAlertTittle   = fd.FollowAlertTittle   ?? CONFIG.FollowAlertTittle;
+  CONFIG.FollowAlertMessage  = fd.FollowAlertMessage  ?? CONFIG.FollowAlertMessage;
+  CONFIG.SubAlertTittle      = fd.SubAlertTittle      ?? CONFIG.SubAlertTittle;
+  CONFIG.SubAlertMessage     = fd.SubAlertMessage     ?? CONFIG.SubAlertMessage;
+  CONFIG.GiftSubAlertTittle  = fd.GiftSubAlertTittle  ?? CONFIG.GiftSubAlertTittle;
+  CONFIG.GiftSubAlertMessage = fd.GiftSubAlertMessage ?? CONFIG.GiftSubAlertMessage;
+  CONFIG.RaidAlertTittle     = fd.RaidAlertTittle     ?? CONFIG.RaidAlertTittle;
+  CONFIG.RaidAlertMessage    = fd.RaidAlertMessage    ?? CONFIG.RaidAlertMessage;
+  CONFIG.CheerAlertTittle    = fd.CheerAlertTittle    ?? CONFIG.CheerAlertTittle;
+  CONFIG.CheerAlertMessage   = fd.CheerAlertMessage   ?? CONFIG.CheerAlertMessage;
+  CONFIG.TipAlertTittle      = fd.TipAlertTittle      ?? CONFIG.TipAlertTittle;
+  CONFIG.TipAlertMessage     = fd.TipAlertMessage     ?? CONFIG.TipAlertMessage;
+
+  if (fd.ignoredUsers) {
+    CONFIG.ignoredUsers = fd.ignoredUsers.toLowerCase().replace(' ','').split(',');
+  }
+  if (fd.botNames) {
+    CONFIG.botNames = fd.botNames.toLowerCase().replace(' ','').split(',');
+  }
+
+  removeSelector = ".message-row:nth-last-child(n+" + (CONFIG.messagesLimit + 1) + ")";
+
+  fetch('https://api.streamelements.com/kappa/v2/channels/' + obj.detail.channel.id + '/')
+    .then(r => r.json())
+    .then(profile => { provider = profile.provider; })
+    .catch(() => {});
+
+  if (CONFIG.pronounsMode !== 'hidden') getPronouns();
+});
+
+window.addEventListener('onEventReceived', async function(obj) {
+  // Button tests from SE editor
+  if (obj.detail.event && obj.detail.event.listener === 'widget-button') {
+    if (obj.detail.event.field === 'testMessage')  testMessage();
+    if (obj.detail.event.field === 'demoMessages') demoMessages(7, 3);
+    return;
+  }
+
+  // Mod actions
+  if (obj.detail.listener === 'delete-message') {
+    const msgId = obj.detail.event.msgId;
+    $(`.message-row[data-msgid=${msgId}]`).remove();
+    return;
+  }
+  if (obj.detail.listener === 'delete-messages') {
+    const sender = obj.detail.event.userId;
+    $(`.message-row[data-sender=${sender}]`).remove();
+    return;
+  }
+
+  // Alerts
+  const AL = obj.detail.listener;
+  const AD = obj.detail.event;
+  if (CONFIG.ShowAlerts === 'visible') {
+    const gift   = AD['bulkGifted'];
+    const gifted = AD['gifted'];
+    const amt    = AD['amount'];
+    const name   = AD['name'];
+    if      (AL === 'subscriber-latest' && gift === true)                    addMessage(CONFIG.GiftSubAlertTittle, '', CONFIG.GiftSubAlertMessage, false, amt,  '', 'gift-subs', false, name);
+    else if (AL === 'subscriber-latest' && gift === undefined && gifted === undefined) addMessage(CONFIG.SubAlertTittle, '', CONFIG.SubAlertMessage, false, amt, '', 'sub', false, name);
+    else if (AL === 'cheer-latest')     addMessage(CONFIG.CheerAlertTittle,  '', CONFIG.CheerAlertMessage,  false, amt,  '', 'cheers', false, name);
+    else if (AL === 'raid-latest')      addMessage(CONFIG.RaidAlertTittle,   '', CONFIG.RaidAlertMessage,   false, amt,  '', 'raid',   false, name);
+    else if (AL === 'tip-latest')       addMessage(CONFIG.TipAlertTittle,    '', CONFIG.TipAlertMessage,    false, amt,  '', 'tip',    false, name);
+    else if (AL === 'follower-latest')  addMessage(CONFIG.FollowAlertTittle, '', CONFIG.FollowAlertMessage, false, '',   '', 'follow', false, name);
+  }
+
+  // Chat message
+  if (obj.detail.listener !== 'message') return;
+  const data        = obj.detail.event.data;
+  const renderedText= obj.detail.event;
+  if (data.text.startsWith('!') && CONFIG.hideCommands === 'yes') return;
+  if (CONFIG.ignoredUsers.indexOf(data.nick) !== -1) return;
+
+  const message = attachEmotes(data, renderedText, obj.detail.event.data);
+  let badges = '', role = '';
+
+  if (CONFIG.botNames.indexOf(data.nick) !== -1) {
+    role = 'bot';
+  } else if (data.tags['badges']) {
+    const b = data.tags['badges'];
+    if      (b.includes('broadcaster')) role = 'broadcaster';
+    else if (b.includes('mod'))         role = 'mod';
+    else if (b.includes('vip'))         role = 'vip';
+    else if (b.includes('subscriber') || b.includes('founder')) role = 'subscriber';
+    else if (b.includes('artist-badge')) role = 'artist';
+    else                                role = 'viewer';
+  } else { role = 'viewer'; }
+
+  if (CONFIG.badgeDisplay === 'visible') {
+    for (const badge of data.badges) {
+      badges += `<img alt="" src="${badge.url}" class="badge"> `;
+    }
+  }
+
+  const pronouns  = await getUserPronoun(data.displayName);
+  const namecolor = data.displayColor;
+  addMessage(data.displayName, badges, message, data.isAction, data.userId, data.msgId, role, data.tags['msg-id'] === 'highlighted-message', 'datas', pronouns, namecolor);
+});
+
+
+/* ═══════════════════════════════════════════════════════════
+   EMOTE HANDLING
+   ═══════════════════════════════════════════════════════════ */
+
+// Cache of BTTV + 7TV emotes: { name -> url }
+const thirdPartyEmotes = {};
+
+async function loadThirdPartyEmotes() {
+  const channel = CONFIG.channelName.toLowerCase();
+
+  // BTTV global
+  try {
+    const r = await fetch('https://api.betterttv.net/3/cached/emotes/global');
+    const d = await r.json();
+    d.forEach(e => { thirdPartyEmotes[e.code] = `https://cdn.betterttv.net/emote/${e.id}/2x`; });
+  } catch {}
+
+  // BTTV channel — need channel ID first
+  try {
+    const ur = await fetch(`https://api.betterttv.net/3/cached/users/twitch/${await getTwitchUserId(channel)}`);
+    const ud = await ur.json();
+    [...(ud.channelEmotes || []), ...(ud.sharedEmotes || [])].forEach(e => {
+      thirdPartyEmotes[e.code] = `https://cdn.betterttv.net/emote/${e.id}/2x`;
+    });
+  } catch {}
+
+  // 7TV global
+  try {
+    const r = await fetch('https://7tv.io/v3/emote-sets/global');
+    const d = await r.json();
+    (d.emotes || []).forEach(e => {
+      const file = e.data?.host?.files?.find(f => f.name === '2x.webp') || e.data?.host?.files?.[0];
+      if (file) thirdPartyEmotes[e.name] = `https:${e.data.host.url}/${file.name}`;
+    });
+  } catch {}
+
+  // 7TV channel
+  try {
+    const r = await fetch(`https://7tv.io/v3/users/twitch/${await getTwitchUserId(channel)}`);
+    const d = await r.json();
+    (d.emote_set?.emotes || []).forEach(e => {
+      const file = e.data?.host?.files?.find(f => f.name === '2x.webp') || e.data?.host?.files?.[0];
+      if (file) thirdPartyEmotes[e.name] = `https:${e.data.host.url}/${file.name}`;
+    });
+  } catch {}
+}
+
+// Cache Twitch user ID (needed for BTTV/7TV channel lookups)
+let _twitchUserId = null;
+async function getTwitchUserId(login) {
+  if (_twitchUserId) return _twitchUserId;
+  // Try to get it from the SE API if available, otherwise fall back to Ivr
+  try {
+    const r = await fetch(`https://api.ivr.fi/v2/twitch/user?login=${login}`);
+    const d = await r.json();
+    _twitchUserId = d?.[0]?.id || null;
+    return _twitchUserId;
+  } catch { return null; }
+}
+
+// Start loading third-party emotes immediately
+loadThirdPartyEmotes();
+
+function attachEmotes(message, renderedText, messsagedata) {
+  const emoteClass = 'emote-1'; // default; solo-emote sizing removed for simplicity
+  const twitchEmotes = message.emotes || [];
+
+  // Step 1: build the raw text
+  let text = message.text || '';
+
+  // Step 2: replace Twitch emotes by position
+  // Sort by start position ascending, then build the output by walking through segments
+  const positioned = twitchEmotes
+    .filter(e => e.type === 'twitch' && typeof e.start === 'number')
+    .sort((a, b) => a.start - b.start);
+
+  if (positioned.length > 0) {
+    let result = '';
+    let cursor = 0;
+    // Use Array.from so positions are code-point based (matches Twitch's indexing)
+    const codePoints = Array.from(text);
+    for (const emote of positioned) {
+      // Append plain text before this emote
+      result += html_encode(codePoints.slice(cursor, emote.start).join(''));
+      // Append the emote image
+      const url = `https://static-cdn.jtvnw.net/emoticons/v2/${emote.id}/default/dark/2.0`;
+      result += `<img class="${emoteClass}" src="${url}"/>`;
+      cursor = emote.end + 1;
+    }
+    // Append any remaining text after the last emote
+    result += html_encode(codePoints.slice(cursor).join(''));
+    text = result;
+  } else {
+    text = html_encode(text);
+  }
+
+  // Step 3: replace BTTV/7TV emotes by name in the plain-text segments only.
+  // Split on HTML tags, process only the non-tag parts.
+  text = text.split(/(<[^>]+>)/).map(segment => {
+    // If this segment is an HTML tag, pass it through untouched
+    if (segment.startsWith('<')) return segment;
+
+    // Otherwise check each word for third-party emotes
+    return segment.replace(/\S+/g, word => {
+      if (thirdPartyEmotes[word]) {
+        return `<img class="${emoteClass}" src="${thirdPartyEmotes[word]}" title="${word}"/>`;
+      }
+      // SE-style named Twitch emotes (fallback for StreamElements path)
+      const match = twitchEmotes.find(e => e.name && e.name === word);
+      if (match) {
+        const url = match.urls?.[4] || match.urls?.[2] || match.urls?.[1];
+        if (url) return `<img class="${emoteClass}" src="${url}"/>`;
+      }
+      return word;
+    });
+  }).join('');
+
+  // Handle image attachments
+  if (message.attachment?.media?.image) {
+    text += `<img src="${message.attachment.media.image.src}">`;
+  }
+
+  return text;
+}
+
+function html_encode(e) {
+  return e.replace(/[<>"^]/g, c => '&#' + c.charCodeAt(0) + ';');
+}
+
+function isRemainingTextEmpty(data) {
+  let { text, emotes } = data;
+  if (emotes && emotes.length > 0) {
+    emotes.forEach(e => { text = text.replace(e.name, ''); });
+  }
+  return text;
+}
+
+function addMessage(username, badges, message, isAction, uid, msgId, role, isHighlight, pronouns, prono, namecolor) {
+  let render_pronoun = '';
+  const color = namecolor || '#5B99FF';
+
+  if (prono) render_pronoun = '(' + prono + ')';
+
+  totalMessages += 1;
+  const highlightClass = isHighlight ? 'highlight' : '';
+  side = (side === 'left') ? 'right' : 'left';
+
+  const alert_message  = (message  || '').replace('$User', pronouns || username).replace('$Amount', uid);
+
+  const isAlert = ['follow','sub','gift-subs','raid','cheers','tip'].includes(role);
+
+  let element;
+  if (isAlert) {
+    element = $.parseHTML(`
+      <div data-sender="${uid}" data-msgid="${msgId}" class="message-row ${highlightClass} ${role}" id="msg-${totalMessages}">
+        <div class="alert-container animated">
+          <div class="alert-bubble">
+            <div class="alert-message">${alert_message}</div>
+            <img class="mango" src="https://cdn.streamelements.com/uploads/f62d968d-5186-498d-8ab5-d7fec4e036f7.png">
+            <img class="punta" src="https://cdn.streamelements.com/uploads/21f5b371-de3a-400b-a8e4-86c2709280e6.png">
+            <svg class="tooth" width="858" height="34" viewBox="0 0 858 34" fill="none">
+              <path d="M0 0H66V34H0V0Z" fill="#9EA0A9"/>
+              <path d="M132 0H198V34H132V0Z" fill="#9EA0A9"/>
+              <path d="M396 0H462V34H396V0Z" fill="#9EA0A9"/>
+              <path d="M660 0H726V34H660V0Z" fill="#9EA0A9"/>
+              <path d="M528 0H594V34H528V0Z" fill="#9EA0A9"/>
+              <path d="M792 0H858V34H792V0Z" fill="#9EA0A9"/>
+              <path d="M264 0H330V34H264V0Z" fill="#9EA0A9"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    `);
+  } else {
+    element = $.parseHTML(`
+      <div data-sender="${uid}" data-msgid="${msgId}" class="message-row ${highlightClass} ${role}" id="msg-${totalMessages}">
+        <div class="message-container animated">
+          <div class="user-box">${badges} ${username}
+            <img class="key" src="https://cdn.streamelements.com/uploads/dd871436-a397-4ab8-8e41-480a86078dd2.png">
+            <img class="mickey" src="https://cdn.streamelements.com/uploads/648dd480-1727-4d2d-b7cd-793fd9226fb3.png">
+            <span class="pronouns">${render_pronoun}</span>
+          </div>
+          <div class="message-bubble">
+            <div class="user-message">${message}</div>
+          </div>
+          <svg class="head" viewBox="0 0 1156 854" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M724.5 777C732.1 724.2 796.666 706.333 828 704L805.5 668.5L698.5 595C1072.5 646.5 894.5 321.5 893 309C891.5 296.5 851 198.5 757.5 218C664 237.5 572.5 225.5 549.5 218C531.1 212 486.5 217.833 466.5 221.5L462 218L422.5 194L376 171L341 147.5L335 161L332 139.5L291 115.5L288 139.5L285.5 136C282.7 108.4 263.666 94.8333 254.5 91.5L237.5 61.5L232.5 68.5L210.5 32L204 37.5C200.333 23.8333 191.6 -2.6 186 1C179 5.5 177 43 183.5 77.5C188.7 105.1 233 158 254.5 181C262.099 181 289 192.667 301.5 198.5C277.1 200.1 255.333 187.5 247.5 181V200L232.5 170.5L180.5 154L186 189.5L174 167.5C169.2 153.9 147.333 144.167 137 141L96.5 104L90 115.5L85 106.5L50.5 73.5L46.5 88.5L32.5 58L26.5 70L21.5 56L2.49989 44.5C-2.30011 56.1 3.16656 71.3333 6.49989 77.5L55.4999 167.5L174 262.5L226 255.5L198 268.5L220 278L228.5 270.5V279.5L254.5 286.5L267 279.5L265 290L279.5 294.5L299 282.5C297.333 287 294.3 295.7 295.5 294.5C296.7 300.1 331.667 295.5 349 292.5L377.5 278L367.5 296L284 301.5L286 309L271.5 302.5L234.5 304L244 316.5L220 306C193 299 90.9997 318 92.4997 325C93.6997 330.6 199.333 350.333 252 359.5L283 342.5L272 358L291 351V356H308L318 347V354.5H325L338 338L344 342.5L338 362.5H309L281.5 377.5L283 385L272 379L254.5 390L262.5 399L247 393.5L232 402L223.5 399L216.5 408L198 413L179.5 415C195.9 425 253 423.5 279.5 421.5L294 406L291 415L312.5 408L311 399L318 406L321 390L325 397L332.5 390C312.5 471.6 315.166 579.667 319 623.5L290 617L286 621L283 613L268 615L266 610L257 613L247 604H238L195.5 571C198.3 603.8 232.666 634.333 249.5 645.5L268 637.5L257 651L268 647.5L266 651L281 655.5L286 647.5V660.5L300 649.5L297 655.5L313.5 660.5L324 651L327 672.5L317.5 668V675L313.5 670.5L301 675L307.5 680.5L293 677.5C281 677.1 253.666 699.333 241.5 710.5H262.5L275.5 703.5H283L297 694.5V703.5L311 691.5V697L331.5 691.5C347.5 781.5 382.5 886 410 844.5C437.5 803 520.5 798.5 641 833.5C737.4 861.5 736.833 807.5 724.5 777Z" fill="${color}"/>
+            <path d="M1015 703C1046.6 708.6 1091.5 771.667 1110 802.5C1132 821.333 1170.8 814.3 1150 635.5C1129.2 456.7 1012.67 358.667 957 332C936.833 319.834 896.5 298.9 896.5 312.5C913.3 474.1 824.167 546.167 777.5 562C751.333 567.667 699 583.1 699 599.5C734.5 725.5 924 709.5 937 703C950 696.5 975.5 696 1015 703Z" fill="#FF8400"/>
+            <mask id="mask0_1415_16" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="660" y="342" width="146" height="157">
+              <path d="M805 427C807.13 468 769.5 501 727 498C666.5 481.5 660 443 660 427C660 378.399 686.884 342.5 733 342.5C779.116 342.5 803 388.5 805 427Z" fill="white"/>
+            </mask>
+            <g mask="url(#mask0_1415_16)">
+              <path d="M805 427C807.13 468 769.5 501 727 498C666.5 481.5 660 443 660 427C660 378.399 686.884 342.5 733 342.5C779.116 342.5 803 388.5 805 427Z" fill="white"/>
+              <path d="M715.988 400C673.588 473.2 711.988 498.834 736.488 502.5C802.087 518.9 805.821 463.667 799.488 434C789.988 395.667 759.988 335.2 715.988 400Z" fill="#79D7BE"/>
+              <ellipse cx="774.135" cy="456.968" rx="26.1731" ry="34.8974" transform="rotate(16.7819 774.135 456.968)" fill="#00CBA4"/>
+              <ellipse cx="739.498" cy="415.859" rx="13.1142" ry="13.6538" transform="rotate(16.7819 739.498 415.859)" fill="white"/>
+              <ellipse cx="752.994" cy="432.125" rx="4.76434" ry="4.9604" transform="rotate(16.7819 752.994 432.125)" fill="white"/>
+              <ellipse cx="755.364" cy="487.459" rx="3.46859" ry="3.61132" transform="rotate(16.7819 755.364 487.459)" fill="white"/>
+            </g>
+          </svg>
+          <svg class="pluma" width="1438" height="425" viewBox="0 0 1438 425" fill="none">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M1066.2 131.331C1018.81 136.803 900.345 137.168 805.572 94.85C792.814 70.5295 759.279 23.3479 727.202 29.1848C695.124 35.0217 676.17 20.6725 670.702 12.7682V43.7768L632.428 0H608.735V29.1848L574.106 0H535.833V12.7682L479.333 0L512.139 43.7768L430.124 0L0 94.85L71.0798 131.331L105.708 124.034V142.275H184.079C198.659 152.611 234.381 167.082 260.626 142.275L306.19 162.339L395.496 124.034L404.608 131.331L377.27 162.339L479.333 191.524L512.139 151.395L523.075 162.339L493.914 204.292L164.03 412.232L224.175 425L275.207 401.288V425L360.867 392.167L368.157 401.288C405.216 401.288 494.643 382.318 555.881 306.438L541.3 357.511L645.186 335.622L674.347 284.549V317.382C702.901 302.79 766.933 278.712 794.636 299.142C758.793 302.79 672.525 331.609 614.203 417.704C670.702 409.192 793.543 385.236 832.91 357.511C842.023 347.783 860.977 323.948 863.894 306.438C866.81 288.927 862.678 318.598 860.248 335.622L914.925 306.438V288.197L929.506 299.142L940.441 268.133C954.414 267.525 983.453 253.906 987.828 204.292L1026.1 155.043L1060.73 149.571L1093.54 173.283L1182.84 249.893L1222.94 268.133L1212 237.124L1244.81 273.605C1276.4 279.077 1342.5 288.927 1354.16 284.549C1365.83 280.172 1366.31 288.805 1365.1 293.67H1438C1408.41 264.485 1336.01 209.764 1283.08 224.356C1275.79 224.356 1286.12 218.276 1292.2 215.236L1259.39 189.7L1235.7 198.82L1230.23 182.403L1175.55 155.043C1164.01 151.395 1134 147.017 1106.29 158.691C1100.62 157.069 1094.59 151.241 1088.51 145.374C1080.93 138.049 1073.28 130.664 1066.2 131.331ZM945.909 176.931C959.274 182.403 990.379 186.052 1007.88 156.867C990.865 152.003 954.657 149.206 945.909 176.931Z" fill="${color}"/>
+          </svg>
+        </div>
+      </div>
+    `);
+  }
+
+  if (CONFIG.hideAfter !== 999) {
+    $(element).appendTo('.main-container').delay(CONFIG.hideAfter * 1000).queue(function() {
+      $(this).removeClass(animationIn).addClass(fadeOut).delay(1000).queue(function() {
+        $(this).remove();
+      }).dequeue();
+    });
+  } else {
+    $(element).appendTo('.main-container');
+  }
+
+  animateContainer();
+}
+
+function animateContainer() {
+  const container = $('.main-container')[0];
+  const lastChild = container.children[container.children.length - 1];
+  const height    = $(lastChild).height();
+  $(container).removeClass('main-container-transition');
+  container.style.marginTop = height + 'px';
+  setTimeout(function(c) {
+    c.style.marginTop    = '0px';
+    c.style.marginBottom = '0px';
+    $(c).addClass('main-container-transition');
+  }, 15, container);
+
+  if (totalMessages > CONFIG.messagesLimit) removeRow();
+}
+
+function removeRow() {
+  if (!$(removeSelector).length) return;
+  if (fadeOut !== 'none' || !$(removeSelector).hasClass(fadeOut)) {
+    if (CONFIG.hideAfter !== 999) {
+      $(removeSelector).dequeue();
+    } else {
+      $(removeSelector).addClass('fadeOut');
+      setTimeout(() => { $(removeSelector).remove(); }, 500);
+    }
+    return;
+  }
+  $(removeSelector).fadeOut(500, function() { $(this).remove(); });
+}
+
+function getSVGElement(name) {
+  const svgs = {
+    "mod":         '<svg class="icon2" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M7 22.9623L10.283 19.6792L7.45283 16.8491L9.15094 15.1509L11.0755 17.0755L18.434 7H25V13.566L14.9245 20.9245L16.8491 22.8491L15.1509 24.5472L12.3208 21.717L9.03774 25L7 22.9623Z" fill="white"/></svg>',
+    "vip":         '<svg class="icon2" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16.1176 25L5 13.6207L9.85134 7H22.384L27.2353 13.6207L16.1176 25Z" fill="white"/></svg>',
+    "broadcaster": '<svg class="icon2" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.6026 8.1987C19.2922 8.1987 19.9535 8.47263 20.4411 8.96022C20.9287 9.44782 21.2026 10.1091 21.2026 10.7987V13.3987L26.4 10.8V21.2L21.2026 18.6V21.2C21.2023 21.8893 20.9282 22.5503 20.4406 23.0376C19.9531 23.525 19.2919 23.7987 18.6026 23.7987H8.2026C7.51304 23.7987 6.85172 23.5248 6.36412 23.0372C5.87653 22.5496 5.6026 21.8883 5.6026 21.1987V10.8C5.6026 10.1104 5.87653 9.44912 6.36412 8.96152C6.85172 8.47393 7.51304 8.2 8.2026 8.2L18.6026 8.1987Z" fill="#EFEFF1"/></svg>',
+    "subscriber":  '<svg class="icon2" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.347 11.3512L6.88701 12.1091C5.67541 12.2781 5.17361 13.6808 6.02381 14.518L10.0902 18.5259L9.10871 24.0795C8.89681 25.2755 10.2475 26.1634 11.3473 25.5511L16 22.9602L20.6527 25.5511C21.7525 26.1621 23.1032 25.2755 22.8913 24.0795L21.9098 18.5259L25.9762 14.518C26.8264 13.6808 26.3246 12.2781 25.113 12.1091L19.653 11.3512L17.3728 6.45021C16.845 5.31661 15.155 5.31661 14.6272 6.45021L12.347 11.3512Z" fill="white"/></svg>',
+    "viewer":      '<svg class="icon2" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M16.2221 25.8997C16.1147 25.8997 16.0073 25.8718 15.9111 25.8159C15.8066 25.7553 13.3238 24.3056 10.8054 22.1212C9.31272 20.8266 8.12122 19.5425 7.26405 18.3047C6.15482 16.703 5.59702 15.1624 5.60602 13.7255C5.61655 12.0536 6.21201 10.4813 7.28283 9.29814C8.37174 8.09506 9.8249 7.43255 11.3747 7.43255C13.361 7.43255 15.177 8.55147 16.2221 10.324C17.2673 8.55151 19.0833 7.43255 21.0695 7.43255C22.5337 7.43255 23.9307 8.03034 25.0033 9.11581C26.1803 10.307 26.8491 11.9901 26.8382 13.7335C26.8291 15.1678 26.2609 16.7061 25.1492 18.3056C24.2894 19.5427 23.0995 20.8262 21.6127 22.1205C19.1035 24.3047 16.6385 25.7543 16.5348 25.815C16.4381 25.8714 16.3301 25.8997 16.2221 25.8997Z" fill="white"/></svg>',
+    "artist":      '<svg class="icon2" width="32" height="32" viewBox="0 0 32 32" fill="none"><path d="M19.7982 6.25999C20.2277 6.37246 21.0047 6.67918 21.5159 6.94501L22.4463 7.42554L21.0047 8.86715C20.2174 9.66463 19.0519 10.9529 18.418 11.7401L17.2627 13.1715L16.1891 13.2226C15.2587 13.2635 15.0236 13.3146 14.4204 13.6009C13.0197 14.2655 12.2835 15.3595 12.0484 17.1589C11.8848 18.4267 11.7314 18.7845 10.9953 19.5718L10.4432 20.175H12.8356C14.7271 20.175 15.3508 20.1443 15.7904 20.0114C16.9048 19.6843 17.9272 18.805 18.418 17.7417C18.6429 17.2407 18.6838 16.9851 18.7247 15.932L18.7656 14.7051L20.013 13.7338C20.6877 13.2022 21.9862 12.0366 22.8859 11.1573L24.532 9.55216L24.7978 9.9918C25.9327 11.873 26.2599 14.2859 25.6055 15.9831C25.2886 16.8113 24.8592 17.3327 23.3358 18.7436C22.5792 19.4389 21.9146 20.1034 21.8431 20.2261C21.7715 20.3386 21.7204 20.6658 21.7102 20.9623C21.6999 23.4467 19.8903 25.5529 17.4671 25.9005C15.8415 26.1255 13.6944 25.9619 12.2528 25.4813C9.51278 24.5714 7.34527 22.4039 6.47622 19.7047C5.92412 17.9768 5.84232 15.6355 6.28196 13.7543C7.22258 9.6544 10.709 6.54627 14.9111 6.06573C16.23 5.9226 18.8678 6.02484 19.7982 6.25999Z" fill="white"/></svg>'
+  };
+  return svgs[name] || null;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   TEST / DEMO FUNCTIONS
+   Trigger via the dev toolbar (?dev=1) or the SE editor buttons
+   ═══════════════════════════════════════════════════════════ */
+function testMessage() {
+  const fakeUsers = [
+    { name: CONFIG.channelName, badges: '', badgeObjs: [{ type: '', version: '1', url: 'https://static-cdn.jtvnw.net/badges/v1/b817aba4-fad8-49e2-b88a-7cc744dfa6ec/3', description: '' }], msg: 'Hey, this is a simple message.', color: '#5B99FF' },
+    { name: CONFIG.channelName, badges: 'broadcaster/1', badgeObjs: [{ type: 'broadcaster', version: '1', url: 'https://static-cdn.jtvnw.net/badges/v1/5527c58c-fb7d-422d-b71b-f309dcb85cc1/3', description: 'broadcaster' }], msg: "Now I'm the streamer!", color: '#FF6B6B' },
+    { name: CONFIG.channelName, badges: 'vip/1',         badgeObjs: [{ type: 'vip', version: '1', url: 'https://static-cdn.jtvnw.net/badges/v1/b817aba4-fad8-49e2-b88a-7cc744dfa6ec/3', description: 'vip' }], msg: "Now I'm VIP! I'm going to write a much bigger message than the rest, just because I can!", color: '#FFD700' },
+    { name: CONFIG.channelName, badges: 'subscriber/1',  badgeObjs: [{ type: 'subscriber', version: '1', url: 'https://static-cdn.jtvnw.net/badges/v1/5d9f2208-5dd8-11e7-8513-2ff4adfae661/3', description: 'subscriber' }], msg: 'Hey I can send emotes!!! Kappa', color: '#7CFC00' },
+    { name: 'turbouser',        badges: 'turbo/1',       badgeObjs: [{ type: 'turbo', version: '1', url: 'https://static-cdn.jtvnw.net/badges/v1/bd444ec6-8f34-4bf9-91f4-af1e3428d80f/3', description: 'turbo' }], msg: 'FeelsAmazingMan', color: '#DA70D6' },
+    { name: 'CoolArtist',       badges: 'artist-badge/1',badgeObjs: [{ type: 'artist', version: '1', url: 'https://static-cdn.jtvnw.net/badges/v1/4300a897-03dc-4e83-8c0e-c332fee7057f/3', description: 'Artist' }], msg: 'I love this emote! FeelsAmazingMan', color: '#FF69B4' },
+    { name: 'Banhammer',        badges: 'mod/1',         badgeObjs: [{ type: 'mod', version: '1', url: 'https://static-cdn.jtvnw.net/badges/v1/3267646d-33f0-4b17-b3df-f923a41db1d0/3', description: 'Mod' }], msg: 'Please follow the chat rules!', color: '#00CED1' },
+  ];
+
+  const fake = fakeUsers[textVar % fakeUsers.length];
+  textVar++;
+
+  const emulated = new CustomEvent('onEventReceived', {
+    detail: {
+      listener: 'message',
+      event: {
+        service: 'twitch',
+        data: {
+          time: Date.now(),
+          tags: {
+            'badge-info': '',
+            badges: fake.badges,
+            color: fake.color,
+            'display-name': fake.name,
+            emotes: '25:46-50',
+            flags: '', id: '43285909-412c-4eee-b80d-89f72ba53142',
+            mod: '1', 'room-id': '85827806', subscriber: '0',
+            'tmi-sent-ts': Date.now().toString(), turbo: '0',
+            'user-id': '100135110', 'user-type': 'mod'
+          },
+          nick: fake.name.toLowerCase(),
+          userId: '100135110',
+          displayName: fake.name,
+          displayColor: fake.color,
+          badges: fake.badgeObjs,
+          channel: CONFIG.channelName,
+          text: fake.msg,
+          isAction: false,
+          emotes: [
+            { type: 'twitch', name: 'Kappa', id: '25', gif: false, urls: { 1: 'https://static-cdn.jtvnw.net/emoticons/v2/25/default/light/1.0', 2: 'https://static-cdn.jtvnw.net/emoticons/v2/25/default/light/2.0', 4: 'https://static-cdn.jtvnw.net/emoticons/v2/25/default/light/3.0' }, start: 0, end: 4 },
+            { type: 'bttv', name: 'FeelsAmazingMan', id: '557546', gif: false, urls: { 1: 'https://cdn.betterttv.net/emote/5733ff12e72c3c0814233e20/1x', 2: 'https://cdn.betterttv.net/emote/5733ff12e72c3c0814233e20/2x', 4: 'https://cdn.betterttv.net/emote/5733ff12e72c3c0814233e20/3x' }, start: 46, end: 50 }
+          ],
+          msgId: '43285909-412c-4eee-b80d-89f72ba53142'
+        },
+        renderedText: undefined
+      }
+    }
+  });
+  window.dispatchEvent(emulated);
+}
+
+function demoMessages(count, intervalSeconds) {
+  let i = 0;
+  function run() { testMessage(); if (++i === count) clearInterval(id); }
+  run();
+  const id = setInterval(run, intervalSeconds * 1000);
+}
+
+// Show dev toolbar when URL contains ?dev=1
+if (window.location.search.includes('dev=1')) {
+  document.getElementById('dev-toolbar').style.display = 'flex';
+}
+</script>
+</body>
+</html>
