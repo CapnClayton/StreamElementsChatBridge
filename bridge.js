@@ -1,6 +1,6 @@
 /**
  * ╔══════════════════════════════════════════════════════════╗
- * ║   Capnceedee Chat Bridge  —  bridge.js                  ║
+ * ║   StreamElements Chat Bridge  —  bridge.js              ║
  * ║   Connects to Twitch chat via ComfyJS and forwards      ║
  * ║   every event to the overlay via a local WebSocket.     ║
  * ╚══════════════════════════════════════════════════════════╝
@@ -103,7 +103,7 @@ ComfyJS.onRaid = (user, viewers, extra) => {
 // ── Connect ───────────────────────────────────────────────────
 ComfyJS.Init(TWITCH_CHANNEL);
 
-console.log(`\n🎮  Capnceedee Chat Bridge started`);
+console.log(`\n🎮  StreamElements Chat Bridge started`);
 console.log(`    Channel : #${TWITCH_CHANNEL}`);
 console.log(`    WS port : ws://localhost:${WS_PORT}`);
 console.log(`    Waiting for the overlay to connect...\n`);

@@ -1,5 +1,5 @@
 @echo off
-title Capnceedee Chat Bridge
+title StreamElements Chat Bridge
 echo.
 echo  Installing dependencies (first run only)...
 call npm install --silent 2>nul
