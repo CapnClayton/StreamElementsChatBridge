@@ -64,5 +64,6 @@ You likely will want to tweak these values to fit your setup
 | Property | Element | What it does |
 |---|---|---|
 | `padding-left` | `.main-container` | Moves everything left/right |
-| `width` | `.message-bubble` | Controls bubble width |
+| `width` | `.message-bubble` | Controls bubble width (Messages) |
+| `width` | `.alert-container` | Controls sword width (Cheers) |
 
