@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Capnceedee Chat Overlay</title>
+  <title>Chat Overlay</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Stint+Ultra+Condensed&display=swap" rel="stylesheet">
@@ -81,6 +81,7 @@
         animation-iteration-count: 1;
         animation-fill-mode: forwards;
         opacity: 0;
+	width: 1400px;
     }
     .message-bubble {
         position: relative;
@@ -631,11 +632,6 @@ async function handleBridgeMessage(msg) {
     case 'raid': {
       if (CONFIG.ShowAlerts === 'visible')
         addMessage(CONFIG.RaidAlertTittle, '', CONFIG.RaidAlertMessage, false, msg.amount, '', 'raid', false, msg.name);
-      break;
-    }
-    case 'follow': {
-      if (CONFIG.ShowAlerts === 'visible')
-        addMessage(CONFIG.FollowAlertTittle, '', CONFIG.FollowAlertMessage, false, '', '', 'follow', false, msg.name);
       break;
     }
   }
