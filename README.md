@@ -1,5 +1,7 @@
 # StreamElements Bridged Chat Overlay
 
+---
+
 ## Me!
 I stream over @ https://twitch.tv/capnceedee and am always happy to talk coding and RPGs!
 
