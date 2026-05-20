@@ -104,9 +104,9 @@ ComfyJS.onRaid = (user, viewers, extra) => {
 ComfyJS.Init(TWITCH_CHANNEL);
 
 console.log(`\n🎮  StreamElements Chat Bridge started`);
-console.log(`    Channel : #${TWITCH_CHANNEL}`);
-console.log(`    WS port : ws://localhost:${WS_PORT}`);
-console.log(`    Waiting for the overlay to connect...\n`);
+console.log(`   Channel : #${TWITCH_CHANNEL}`);
+console.log(`   WS port : ws://localhost:${WS_PORT}`);
+console.log(`   Waiting for the overlay to connect...\n`);
 
 
 // ── Helpers ───────────────────────────────────────────────────
