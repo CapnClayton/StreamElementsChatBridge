@@ -61,9 +61,9 @@ OBS uses an older version of Chromium so the dev site's CSS may make it look as 
 
 You likely will want to tweak these values to fit your setup
 
-| Property | Element | What it does |
+| Element | Property | What it does |
 |---|---|---|
-| `padding-left` | `.main-container` | Moves everything left/right |
-| `width` | `.message-bubble` | Controls bubble width (Messages) |
-| `width` | `.alert-container` | Controls sword width (Cheers) |
+| `.main-container` | `padding-left` | Moves everything left/right |
+| `.message-bubble` | `width` | Controls bubble width (Messages) |
+| `.alert-container` | `width` | Controls sword width (Cheers) |
 
