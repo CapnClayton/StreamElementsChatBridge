@@ -69,3 +69,10 @@ You likely will want to tweak these values to fit your setup
 | `.message-bubble` | `width` | Controls bubble width (Messages) |
 | `.alert-container` | `width` | Controls sword width (Cheers) |
 
+---
+
+## FAQs
+
+**Q. Ew, why is it all in one html file?**
+
+Simpler for OBS to load up the browser source
