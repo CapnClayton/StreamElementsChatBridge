@@ -59,7 +59,7 @@ OBS uses an older version of Chromium so the dev site's CSS may make it look as 
 | `ShowAlerts` | Show/hide sub/raid/etc alerts |
 | `*AlertMessage` | Text for each alert type (`$User`, `$Amount`) |
 
-### Appearence/CSS Tweaks
+### Appearance/CSS Tweaks
 
 You likely will want to tweak these values to fit your setup
 
